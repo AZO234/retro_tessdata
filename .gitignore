@@ -20,9 +20,9 @@ GEMINI.md
 AGENTS.md
 
 # Project specific data
-.cache_corpus/
-tessdata/*
-!tessdata/pc98.traineddata
-input_screenshots/*.png
-!input_screenshots/screen_1.png
-base_*/
+tessdata/
+base_*
+rom/
+!rom/put font rom here.txt
+cache_corpus/
+
