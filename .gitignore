@@ -20,8 +20,9 @@ GEMINI.md
 AGENTS.md
 
 # Project specific data
-tessdata/
+.cache_corpus/
+tessdata/*
+!tessdata/pc98.traineddata
 input_screenshots/*.png
 !input_screenshots/screen_1.png
-kept_translations/keep*
-usage_stats.json
+base_*/
