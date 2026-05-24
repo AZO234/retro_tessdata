@@ -163,7 +163,7 @@ $ python main.py <architecture> full --iterate 100000
 | `generate` | Generate training images (`.tif` / `.box`) |
 | `image`    | Convert the multi-page TIF to a single-page PNG (for inspection) |
 | `concat`   | Generate unicharset + starter traineddata + lstmf |
-| `train`    | lstmtraining + export |
+| `train`    | lstmtraining + export of the best model (see Step 5 below) |
 | `full`     | Run the above in the order `clean → generate → image → concat → train` |
 
 To add more training iterations only, run `python main.py <architecture> train --iterate 200000`
@@ -241,11 +241,15 @@ BCER drops sufficiently (near 0%).
 
 ### Output Training Data
 
-The training results are output to the working directory `base_<architecture>/tessdata/`.
+At the end of training (Step 5: export), `lstmtraining --stop_training` writes out the
+**best model (best_model_data_, not the final iteration)** from the checkpoint. It is output
+to both the working directory `base_<architecture>/tessdata/` and, for distribution, the
+**repository top-level `tessdata/`** (the best is always promoted there by copy).
 
 - Horizontal: `base_<architecture>/tessdata/<architecture>.traineddata` (e.g. `base_pc98/tessdata/pc98.traineddata`)
 - Vertical: `base_<architecture>/tessdata/<architecture>_vert.traineddata` (e.g. `base_pc98/tessdata/pc98_vert.traineddata`)
 - Scan: `base_<architecture>/tessdata/<architecture>_scan.traineddata`
+- Distribution copy: `tessdata/<architecture>.traineddata` (repository top level)
 
 To use them, place them in Tesseract's `tessdata` directory (or use `--tessdata-dir`) and
 specify the model by name, e.g. `tesseract image.png out -l pc98`. To combine multiple

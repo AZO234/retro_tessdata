@@ -159,7 +159,7 @@ $ python main.py <architecture> full --iterate 100000
 | `generate` | 学習画像（`.tif` / `.box`）生成 |
 | `image`    | マルチページTIFを1ページPNGに変換（確認用） |
 | `concat`   | unicharset + starter traineddata + lstmf 生成 |
-| `train`    | lstmtraining + エクスポート |
+| `train`    | lstmtraining + ベストモデルのエクスポート（後述 Step 5） |
 | `full`     | 上記を `clean → generate → image → concat → train` の順に一括実行 |
 
 学習だけ追加したい場合は `python main.py <architecture> train --iterate 200000` を実行
@@ -233,11 +233,15 @@ $ python main.py pc98 full --iterate 100000 --corpus auto+wiki+wikigen+kanwa
 
 ### 出力学習データ
 
-学習結果は作業ディレクトリ `base_<機種>/tessdata/` に出力されます。
+学習の最後（Step 5: export）で、Tesseract の `lstmtraining --stop_training` により
+チェックポイントから **ベストモデル（最終イテレーションではなく best_model_data_）** を
+書き出します。出力先は作業ディレクトリ `base_<機種>/tessdata/` と、配布用に
+**リポジトリ直下の `tessdata/`** の両方です（直下へは常に昇格コピーされます）。
 
 - 横書き： `base_<機種>/tessdata/<機種>.traineddata`（例 `base_pc98/tessdata/pc98.traineddata`）
 - 縦書き： `base_<機種>/tessdata/<機種>_vert.traineddata`（例 `base_pc98/tessdata/pc98_vert.traineddata`）
 - スキャン： `base_<機種>/tessdata/<機種>_scan.traineddata`
+- 配布用コピー： `tessdata/<機種>.traineddata`（リポジトリ直下）
 
 使用時は Tesseract の `tessdata` ディレクトリ（または `--tessdata-dir`）に置き、
 `tesseract image.png out -l pc98` のように機種名で指定します。複数機種を併用するなら

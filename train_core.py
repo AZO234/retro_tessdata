@@ -383,14 +383,22 @@ def step_train(cfg: dict, work_dir: Path, tess_dir: Path,
                     f'O1c{unichar_size}]')
         run(base_cmd + ['--net_spec', net_spec])
 
-    # Step 5: エクスポート
+    # Step 5: エクスポート (--stop_training は checkpoint 内の best_model_data_
+    #          ＝最終 iter ではなくベストを書き出す)
     print('\n--- Step 5: export ---')
     if checkpoint.exists():
+        exported = tessdata_dir / f'{lang}.traineddata'
         run([exe(tess_dir, 'lstmtraining'),
              '--stop_training',
              '--continue_from',  checkpoint,
              '--traineddata',    work_dir / f'{prefix}.full.traineddata',
-             '--model_output',   tessdata_dir / f'{lang}.traineddata'])
-        print(f'Exported: {tessdata_dir / lang}.traineddata')
+             '--model_output',   exported])
+        print(f'Exported: {exported}')
+        # リポジトリ直下 tessdata/ へベストを常に昇格コピー (配布用)
+        repo_tessdata = work_dir.parent / 'tessdata'
+        repo_tessdata.mkdir(parents=True, exist_ok=True)
+        published = repo_tessdata / f'{lang}.traineddata'
+        shutil.copy(exported, published)
+        print(f'Published: {published}')
     else:
         print('No checkpoint found, skipping export.')
